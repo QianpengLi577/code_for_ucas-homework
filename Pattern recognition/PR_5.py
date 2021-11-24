@@ -196,9 +196,11 @@ y_train = y_train.reshape(-1)
 
 k_nn = 1  # knn参数
 print('orl part')
-orlrecord = np.zeros((20, 2))
-for i in range(20):
-    k_orl = 5 * (i + 1)
+orlrecord = np.zeros((150, 2))
+x_orl_list=[]
+for i in range(150):
+    k_orl = 3 * (i + 1)
+    x_orl_list.append(k_orl)
     print('k_orl=', k_orl)
 
     # orl using LDA
@@ -236,8 +238,10 @@ y_train = y_train.reshape(-1)
 print('\n')
 print('veh part')
 vehrecord = np.zeros((10, 2))
+x_veh_list=[]
 for i in range(10):
     k_veh = 2 + i
+    x_veh_list.append(k_veh)
     print('k_veh=', k_veh)
 
     # veh using LDA
@@ -259,3 +263,32 @@ for i in range(10):
 np.savetxt('orlrecord.csv', orlrecord, fmt='%.6f', delimiter=',')
 np.savetxt('vehrecoed.csv', vehrecord, fmt='%.6f', delimiter=',')
 print('finsh')
+
+##################################################################
+###################### plot img
+import matplotlib.pyplot as plt
+font1 = {'family' : 'Times New Roman',
+'weight' : 'normal',
+'size' : 9,
+}
+plt.plot(x_orl_list,orlrecord[:,0],color='blue', label='$LDA$', linewidth=0.8)
+plt.legend(loc='upper right', prop=font1, frameon=False)
+plt.plot(x_orl_list,orlrecord[:,1],color='red', label='$PCA$', linewidth=0.8)
+plt.legend(loc='upper right', prop=font1, frameon=False)
+plt.xlabel('Dim')
+plt.ylabel('ACC')
+plt.title('orl_1NN')
+plt.savefig('orl_1NN.png')
+plt.show()
+
+plt.plot(x_veh_list,vehrecord[:,0],color='blue', label='$LDA$', linewidth=0.8)
+plt.legend(loc='upper right', prop=font1, frameon=False)
+plt.plot(x_veh_list,vehrecord[:,1],color='red', label='$PCA$', linewidth=0.8)
+plt.legend(loc='upper right', prop=font1, frameon=False)
+plt.xlabel('Dim')
+plt.ylabel('ACC')
+plt.title('veh_1NN')
+plt.savefig('veh_1NN.png')
+plt.show()
+
+
