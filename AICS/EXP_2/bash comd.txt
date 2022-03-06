@@ -1,4 +1,4 @@
-ssh root@120.236.247.203 -p 23903
+ssh root@ ip  -p  port
 
 # exp_1
 cd /
