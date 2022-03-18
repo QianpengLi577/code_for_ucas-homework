@@ -13,16 +13,19 @@ import torchvision
 import torchvision.transforms as transforms
 import os
 import time
-from spiking_model import*
+from spiking_model import *
+
+total_bit = 8
+float_bit = 6
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = "3"
 names = 'spiking_model'
-data_path =  './raw/' #todo: input your data path
+data_path = './raw/'  # todo: input your data path
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-train_dataset = torchvision.datasets.MNIST(root= data_path, train=True, download=True, transform=transforms.ToTensor())
+train_dataset = torchvision.datasets.MNIST(root=data_path, train=True, download=True, transform=transforms.ToTensor())
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
-test_set = torchvision.datasets.MNIST(root= data_path, train=False, download=True,  transform=transforms.ToTensor())
+test_set = torchvision.datasets.MNIST(root=data_path, train=False, download=True, transform=transforms.ToTensor())
 test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=0)
 
 best_acc = 0  # best test accuracy
@@ -49,12 +52,23 @@ for epoch in range(num_epochs):
         loss = criterion(outputs.cpu(), labels_)
         running_loss += loss.item()
         loss.backward()
+
+        if (epoch > 5):
+            snn.conv1.bias.data = float_to_fixed_array(snn.conv1.bias.data, total_bit, float_bit)
+            snn.conv1.weight.data = float_to_fixed_array(snn.conv1.weight.data, total_bit, float_bit)
+            snn.conv2.bias.data = float_to_fixed_array(snn.conv2.bias.data, total_bit, float_bit)
+            snn.conv2.weight.data = float_to_fixed_array(snn.conv2.weight.data, total_bit, float_bit)
+            snn.fc1.bias.data = float_to_fixed_array(snn.fc1.bias.data, total_bit, float_bit)
+            snn.fc1.weight.data = float_to_fixed_array(snn.fc1.weight.data, total_bit, float_bit)
+            snn.fc2.bias.data = float_to_fixed_array(snn.fc2.bias.data, total_bit, float_bit)
+            snn.fc2.weight.data = float_to_fixed_array(snn.fc2.weight.data, total_bit, float_bit)
+
         optimizer.step()
-        if (i+1)%2 == 0:
-             print ('Epoch [%d/%d], Step [%d/%d], Loss: %.5f'
-                    %(epoch+1, num_epochs, i+1, len(train_dataset)//batch_size,running_loss ))
-             running_loss = 0
-             print('Time elasped:', time.time()-start_time)
+        if (i + 1) % 2 == 0:
+            print('Epoch [%d/%d], Step [%d/%d], Loss: %.5f'
+                  % (epoch + 1, num_epochs, i + 1, len(train_dataset) // batch_size, running_loss))
+            running_loss = 0
+            print('Time elasped:', time.time() - start_time)
     correct = 0
     total = 0
     optimizer = lr_scheduler(optimizer, epoch, learning_rate, 40)
@@ -69,11 +83,11 @@ for epoch in range(num_epochs):
             _, predicted = outputs.cpu().max(1)
             total += float(targets.size(0))
             correct += float(predicted.eq(targets).sum().item())
-            if batch_idx %100 ==0:
+            if batch_idx % 100 == 0:
                 acc = 100. * float(correct) / float(total)
-                print(batch_idx, len(test_loader),' Acc: %.5f' % acc)
+                print(batch_idx, len(test_loader), ' Acc: %.5f' % acc)
 
-    print('Iters:', epoch,'\n\n\n')
+    print('Iters:', epoch, '\n\n\n')
     print('Test Accuracy of the model on the 10000 test images: %.3f' % (100 * correct / total))
     acc = 100. * float(correct) / float(total)
     acc_record.append(acc)
