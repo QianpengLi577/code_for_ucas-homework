@@ -10,10 +10,13 @@ import torch
 
 
 # 量化 func
-def float_to_fixed_array(x, total_bit, float_bit):
+def float_to_fixed_array(input, total_bit, float_bit):
     # x numpy darray
     # total_bit  int number
     # float_bit  int number
+
+    x = input.numpy()
+
     FL = float_bit  # 用 float_bit bit表示小数部分
     IL = total_bit - FL  # 用 IL bit表示整数部分（1 bit为符号位，IL-1 bit为整数）
     MIN = -(1 << (IL - 1))  # 可表示的最小值
@@ -37,7 +40,8 @@ def float_to_fixed_array(x, total_bit, float_bit):
     q[idx_2] += e
     q *= sig
     q = np.clip(q, MIN, MAX)
-    return q
+
+    return torch.from_numpy(q)
 
 
 # tb
