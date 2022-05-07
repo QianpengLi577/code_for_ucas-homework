@@ -4,6 +4,9 @@
 # @FileName: ML_4.py
 # @Contact : liqianpeng2021@ia.ac.cn
 
+# this file is an example for sarsa and Q-learning
+# analysis.py is to assess the impact of alpha, gamma, scaling
+
 import gym
 import numpy as np
 
@@ -74,16 +77,18 @@ def test(env, log, Q, method, test_steps):
     # print(info)
 
 
-env = gym.make('FrozenLake-v1')
-print('observation_space:', env.observation_space.n)
-print('action_space:', env.action_space.n)
-# Initialize gym and print some related information
-alpha, e, gamma, iters, steps, scaling, test_steps = 0.01, 0.2, 0.99, 50000, 200, 5, 200
-# set parameters
-Q_sarsa, r_sarsa = train(env, alpha, gamma, e, iters, steps, scaling, 'sarsa')
-test(env, True, Q_sarsa, 'sarsa', test_steps)
-# sarsa
-Q_Q_learning, r_q = train(env, alpha, gamma, e, iters,
-                          steps, scaling, 'Q_learning')
-test(env, True, Q_Q_learning, 'Q_learning', test_steps)
-# Q-learning
+if __name__ == "__main__":
+    env = gym.make('FrozenLake-v1')
+    print('observation_space:', env.observation_space.n)
+    print('action_space:', env.action_space.n)
+    # Initialize gym and print some related information
+    alpha, e, gamma, iters, steps, scaling, test_steps = 0.01, 0.2, 0.99, 50000, 200, 5, 1000
+    # set parameters
+    Q_sarsa, r_sarsa = train(env, alpha, gamma, e,
+                             iters, steps, scaling, 'sarsa')
+    test(env, True, Q_sarsa, 'sarsa', test_steps)
+    # sarsa
+    Q_Q_learning, r_q = train(env, alpha, gamma, e, iters,
+                              steps, scaling, 'Q_learning')
+    test(env, True, Q_Q_learning, 'Q_learning', test_steps)
+    # Q-learning
