@@ -12,12 +12,13 @@ def e_policy(state, e, Q, step):
     # choose a action at state using e-policy
     action_space = Q.shape[1]
     if np.random.rand(1) < e/(1+step/10):
+        # reduce epsilon with step and choose action randomly
         return np.random.randint(action_space)
     else:
         return np.argmax(Q[state, :])
 
 
-def train(env, alpha, gama, e, iters, steps, scaling, method):
+def train(env, alpha, gamma, e, iters, steps, scaling, method):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
     reward_list = []
     for i in range(iters):
@@ -29,16 +30,18 @@ def train(env, alpha, gama, e, iters, steps, scaling, method):
             state_next, reward, done, info = env.step(action)
             reward *= scaling
             action_next = e_policy(state_next, e, Q, step)
+            # get next state, action, reward and update Q-table using sarsa, Q-learning or other methods which can be added in the future
             if method == 'sarsa':
                 Q[state, action] = Q[state, action]+alpha * \
-                    (reward+int(not done)*gama *
+                    (reward+int(not done)*gamma *
                      Q[state_next, action_next]-Q[state, action])
             elif method == 'Q_learning':
                 Q[state, action] = Q[state, action]+alpha * \
-                    (reward+int(not done)*gama *
+                    (reward+int(not done)*gamma *
                      Q[state_next, :].max()-Q[state, action])
             else:
                 print('')
+                # other methods to be added
             state = state_next
             action = action_next
             step += 1
@@ -49,6 +52,7 @@ def train(env, alpha, gama, e, iters, steps, scaling, method):
 
 
 def test(env, log, Q, method, test_steps):
+    # same to training process, but choose action using max Q-table value instead of e-policy
     reward_list = []
     for _ in range(test_steps):
         state = env.reset()
@@ -73,10 +77,13 @@ def test(env, log, Q, method, test_steps):
 env = gym.make('FrozenLake-v1')
 print('observation_space:', env.observation_space.n)
 print('action_space:', env.action_space.n)
-alpha, e, gama, iters, steps, scaling, test_steps = 0.01, 0.2, 0.99, 50000, 200, 5, 200
-Q_sarsa, r_sarsa = train(env, alpha, gama, e, iters, steps, scaling, 'sarsa')
+# Initialize gym and print some related information
+alpha, e, gamma, iters, steps, scaling, test_steps = 0.01, 0.2, 0.99, 50000, 200, 5, 200
+# set parameters
+Q_sarsa, r_sarsa = train(env, alpha, gamma, e, iters, steps, scaling, 'sarsa')
 test(env, True, Q_sarsa, 'sarsa', test_steps)
-
-Q_Q_learning, r_q = train(env, alpha, gama, e, iters,
+# sarsa
+Q_Q_learning, r_q = train(env, alpha, gamma, e, iters,
                           steps, scaling, 'Q_learning')
 test(env, True, Q_Q_learning, 'Q_learning', test_steps)
+# Q-learning
