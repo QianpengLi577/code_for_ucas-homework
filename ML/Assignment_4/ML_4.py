@@ -21,7 +21,7 @@ def e_policy(state, e, Q, step):
         return np.argmax(Q[state, :])
 
 
-def train(env, alpha, gamma, e, iters, steps, scaling, method):
+def train(env, alpha, gamma, e, iters, steps, scaling, method, log=False):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
     reward_list = []
     for i in range(iters):
@@ -50,7 +50,10 @@ def train(env, alpha, gamma, e, iters, steps, scaling, method):
             step += 1
             if(step > steps):
                 done = True
-        # reward_list.append(test(env, False, Q, ' ', 50))
+        if log:
+            reward_list.append(test(env, False, Q, ' ', 20)/scaling)
+            if (i%200==0):
+                print(str(i+1)+' iter: '+str(test(env, False, Q, ' ', 20)/scaling))
     return Q, reward_list
 
 
