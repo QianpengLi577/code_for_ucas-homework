@@ -51,9 +51,9 @@ def train(env, alpha, gamma, e, iters, steps, scaling, method, log=False):
             if(step > steps):
                 done = True
         if log:
-            reward_list.append(test(env, False, Q, ' ', 20)/scaling)
+            reward_list.append(test(env, False, Q, ' ', 20))
             if (i%200==0):
-                print(str(i+1)+' iter: '+str(test(env, False, Q, ' ', 20)/scaling))
+                print(str(i+1)+' iter: '+str(test(env, False, Q, ' ', 20)))
     return Q, reward_list
 
 
