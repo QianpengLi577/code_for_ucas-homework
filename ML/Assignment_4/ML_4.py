@@ -3,12 +3,14 @@
 # @Author  : Qianpeng Li
 # @FileName: ML_4.py
 # @Contact : liqianpeng2021@ia.ac.cn
+# @Github  : https://github.com/QianpengLi577
 
 # this file is an example for sarsa and Q-learning
 # analysis.py is to assess the impact of alpha, gamma, scaling
 
 import gym
 import numpy as np
+import argparse
 
 
 def e_policy(state, e, Q, step):
@@ -24,7 +26,7 @@ def e_policy(state, e, Q, step):
 def train(env, alpha, gamma, e, iters, steps, scaling, method, log=False):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
     reward_list = []
-    temp=[]
+    temp = []
     for i in range(iters):
         state = env.reset()
         action = e_policy(state, e, Q, 0)
@@ -54,12 +56,12 @@ def train(env, alpha, gamma, e, iters, steps, scaling, method, log=False):
         if log:
             a = test(env, False, Q, ' ', 20)
             temp.append(a)
-            if((i+1)%200 == 0):
+            if((i+1) % 200 == 0):
                 reward_list.append(np.array(temp).mean())
-                temp=[]
+                temp = []
             if ((i+1) % 1000 == 0 & (i > 0)):
                 print(str(i+1)+' iter: '+str(a))
-            
+
     return Q, reward_list
 
 
@@ -89,11 +91,29 @@ def test(env, log, Q, method, test_steps, plot=False):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='parameter setting ')
+    parser.add_argument('-a',
+                        default='0.1', help='alpha ', type=float)
+    parser.add_argument('-e',
+                        default='0.4', help='epsilon ', type=float)
+    parser.add_argument('-g',
+                        default='0.99', help='gamma ', type=float)
+    parser.add_argument('-i',
+                        default='10000', help='iters ', type=int)
+    parser.add_argument('-st',
+                        default='200', help='steps ', type=int)
+    parser.add_argument('-sc',
+                        default='5', help='scaling ', type=int)
+    parser.add_argument('-t',
+                        default='1000', help='test_steps ', type=int)
+    args = parser.parse_args()
+
     env = gym.make('FrozenLake-v1', is_slippery=True)
     print('observation_space:', env.observation_space.n)
     print('action_space:', env.action_space.n)
     # Initialize gym and print some related information
-    alpha, e, gamma, iters, steps, scaling, test_steps = 0.1, 0.4, 0.99, 10000, 200, 5, 1000
+    alpha, e, gamma, iters, steps, scaling, test_steps = args.a, args.e, args.g, args.i, args.st, args.sc, args.t
     # set parameters
     Q_sarsa, r_sarsa = train(env, alpha, gamma, e,
                              iters, steps, scaling, 'sarsa', True)

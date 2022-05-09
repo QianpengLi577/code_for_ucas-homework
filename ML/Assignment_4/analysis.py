@@ -3,6 +3,7 @@
 # @Author  : Qianpeng Li
 # @FileName: analysis.py
 # @Contact : liqianpeng2021@ia.ac.cn
+# @Github  : https://github.com/QianpengLi577
 
 from ML_4 import e_policy, train, test
 import gym
@@ -10,23 +11,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 env = gym.make('FrozenLake-v1')
-alpah_list = [0.02, 0.04, 0.08, 0.1, 0.2]
+alpha_list = [0.02, 0.04, 0.08, 0.1, 0.2]
 gamma_list = [0.59, 0.69, 0.79, 0.89, 0.99]
 scaling_list = [1, 2, 3, 4, 5]
 # Initialize gym and print some related information
 alpha, e, gamma, iters, steps, scaling, test_steps = 0.1, 0.4, 0.99, 20000, 200, 5, 1000
 # differert aplha using sarsa
 R1 = []
-for i in range(len(alpah_list)):
-    Q_sarsa, r_sarsa = train(env, alpah_list[i], gamma, e, iters,
+for i in range(len(alpha_list)):
+    Q_sarsa, r_sarsa = train(env, alpha_list[i], gamma, e, iters,
                             steps, scaling, 'sarsa', True)
     R1.append(r_sarsa)
 
 
 # differert aplha using Q_L
 R2 = []
-for i in range(len(alpah_list)):
-    Q_Q_learning, r_q = train(env, alpah_list[i], gamma, e, iters,
+for i in range(len(alpha_list)):
+    Q_Q_learning, r_q = train(env, alpha_list[i], gamma, e, iters,
                             steps, scaling, 'Q_learning', True)
     R2.append(r_q)
 
@@ -86,7 +87,7 @@ x = np.linspace(0, R1.shape[1], R1.shape[1])
 plt.figure(figsize=(10, 6))
 plt.title('sarsa with different alpha')
 for i in range(R1.shape[0]):
-    plt.plot(x,R1[i,:],label='alpha-'+str(alpah_list[i]),ls=":")
+    plt.plot(x,R1[i,:],label='alpha-'+str(alpha_list[i]),ls=":")
 plt.legend()
 plt.xlabel('train step')
 plt.ylabel('average reward')
@@ -96,7 +97,7 @@ plt.show()
 plt.figure(figsize=(10, 6))
 plt.title('Q-learning with different alpha')
 for i in range(R2.shape[0]):
-    plt.plot(x,R2[i,:],label='alpha-'+str(alpah_list[i]),ls=":")
+    plt.plot(x,R2[i,:],label='alpha-'+str(alpha_list[i]),ls=":")
 plt.legend()
 plt.xlabel('train step')
 plt.ylabel('average reward')
@@ -124,23 +125,23 @@ plt.savefig('Q-learning with different gamma.png')
 plt.show()
 
 plt.figure(figsize=(10, 6))
-plt.title('sarsa with different scaling')
+plt.title('sarsa with different reward')
 for i in range(R5.shape[0]):
-    plt.plot(x,R5[i,:],label='scaling-'+str(scaling_list[i]),ls=":")
+    plt.plot(x,R5[i,:],label='reward-'+str(scaling_list[i]),ls=":")
 plt.legend()
 plt.xlabel('train step')
 plt.ylabel('average reward')
-plt.savefig('sarsa with different scaling.png')
+plt.savefig('sarsa with different reward.png')
 plt.show()
 
 plt.figure(figsize=(10, 6))
-plt.title('Q-learning with different scaling')
+plt.title('Q-learning with different reward')
 for i in range(R6.shape[0]):
-    plt.plot(x,R6[i,:],label='scaling-'+str(scaling_list[i]),ls=":")
+    plt.plot(x,R6[i,:],label='reward-'+str(scaling_list[i]),ls=":")
 plt.legend()
 plt.xlabel('train step')
 plt.ylabel('average reward')
-plt.savefig('Q-learning with different scaling.png')
+plt.savefig('Q-learning with different reward.png')
 plt.show()
 
 print('finsh')
