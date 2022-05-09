@@ -135,8 +135,8 @@ plt.show()
 
 plt.figure(figsize=(10, 6))
 plt.title('Q-learning with different scaling')
-for i in range(R4.shape[0]):
-    plt.plot(x,R4[i,:],label='scaling-'+str(scaling_list[i]),ls=":")
+for i in range(R6.shape[0]):
+    plt.plot(x,R6[i,:],label='scaling-'+str(scaling_list[i]),ls=":")
 plt.legend()
 plt.xlabel('train step')
 plt.ylabel('average reward')
