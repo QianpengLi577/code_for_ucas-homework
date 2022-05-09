@@ -8,7 +8,7 @@ alpah_list = [0.02, 0.04, 0.08, 0.1, 0.2]
 gamma_list = [0.59, 0.69, 0.79, 0.89, 0.99]
 scaling_list = [1, 2, 3, 4, 5]
 # Initialize gym and print some related information
-alpha, e, gamma, iters, steps, scaling, test_steps = 0.1, 0.4, 0.99, 5000, 200, 5, 1000
+alpha, e, gamma, iters, steps, scaling, test_steps = 0.1, 0.4, 0.99, 20000, 200, 5, 1000
 # differert aplha using sarsa
 R1 = []
 for i in range(len(alpah_list)):
@@ -67,6 +67,13 @@ np.savetxt('R3.csv', R3, delimiter=',')
 np.savetxt('R4.csv', R4, delimiter=',')
 np.savetxt('R5.csv', R5, delimiter=',')
 np.savetxt('R6.csv', R6, delimiter=',')
+
+R1 = np.loadtxt('R1.csv',dtype=np.float32, delimiter=',')
+R2 = np.loadtxt('R2.csv',dtype=np.float32, delimiter=',')
+R3 = np.loadtxt('R3.csv',dtype=np.float32, delimiter=',')
+R4 = np.loadtxt('R4.csv',dtype=np.float32, delimiter=',')
+R5 = np.loadtxt('R5.csv',dtype=np.float32, delimiter=',')
+R6 = np.loadtxt('R6.csv',dtype=np.float32, delimiter=',')
 
 x = np.linspace(0, R1.shape[1], R1.shape[1])
 
