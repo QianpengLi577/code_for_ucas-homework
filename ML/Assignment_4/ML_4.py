@@ -51,13 +51,14 @@ def train(env, alpha, gamma, e, iters, steps, scaling, method, log=False):
             if(step > steps):
                 done = True
         if log:
-            reward_list.append(test(env, False, Q, ' ', 20))
-            if (i%200==0):
-                print(str(i+1)+' iter: '+str(test(env, False, Q, ' ', 20)))
+            a = test(env, False, Q, ' ', 20)
+            reward_list.append(a)
+            if (i % 1000 == 0):
+                print(str(i+1)+' iter: '+str(a))
     return Q, reward_list
 
 
-def test(env, log, Q, method, test_steps):
+def test(env, log, Q, method, test_steps, plot=False):
     # same to training process, but choose action using max Q-table value instead of e-policy
     reward_list = []
     for _ in range(test_steps):
@@ -65,11 +66,13 @@ def test(env, log, Q, method, test_steps):
         action = np.argmax(Q[state, :])
         done = False
         reward_sum = 0
-        # env.render()
+        if plot:
+            env.render()
         while not done:
             state, reward, done, info = env.step(action)
             reward_sum += reward
-            # env.render()
+            if plot:
+                env.render()
             action = np.argmax(Q[state, :])
         reward_list.append(reward_sum)
     if log:
@@ -81,17 +84,17 @@ def test(env, log, Q, method, test_steps):
 
 
 if __name__ == "__main__":
-    env = gym.make('FrozenLake-v1')
+    env = gym.make('FrozenLake-v1', is_slippery=True)
     print('observation_space:', env.observation_space.n)
     print('action_space:', env.action_space.n)
     # Initialize gym and print some related information
-    alpha, e, gamma, iters, steps, scaling, test_steps = 0.01, 0.2, 0.99, 50000, 200, 5, 1000
+    alpha, e, gamma, iters, steps, scaling, test_steps = 0.01, 0.4, 0.99, 10000, 200, 5, 1000
     # set parameters
     Q_sarsa, r_sarsa = train(env, alpha, gamma, e,
-                             iters, steps, scaling, 'sarsa')
-    test(env, True, Q_sarsa, 'sarsa', test_steps)
+                             iters, steps, scaling, 'sarsa', True)
+    test(env, True, Q_sarsa, 'sarsa', test_steps, plot=False)
     # sarsa
     Q_Q_learning, r_q = train(env, alpha, gamma, e, iters,
-                              steps, scaling, 'Q_learning')
-    test(env, True, Q_Q_learning, 'Q_learning', test_steps)
+                              steps, scaling, 'Q_learning', True)
+    test(env, True, Q_Q_learning, 'Q_learning', test_steps, plot=False)
     # Q-learning
