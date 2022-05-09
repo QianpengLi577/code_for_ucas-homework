@@ -24,6 +24,7 @@ def e_policy(state, e, Q, step):
 def train(env, alpha, gamma, e, iters, steps, scaling, method, log=False):
     Q = np.zeros((env.observation_space.n, env.action_space.n))
     reward_list = []
+    temp=[]
     for i in range(iters):
         state = env.reset()
         action = e_policy(state, e, Q, 0)
@@ -52,9 +53,13 @@ def train(env, alpha, gamma, e, iters, steps, scaling, method, log=False):
                 done = True
         if log:
             a = test(env, False, Q, ' ', 20)
-            reward_list.append(a)
-            if (i % 1000 == 0):
+            temp.append(a)
+            if((i+1)%200 == 0):
+                reward_list.append(np.array(temp).mean())
+                temp=[]
+            if ((i+1) % 1000 == 0 & (i > 0)):
                 print(str(i+1)+' iter: '+str(a))
+            
     return Q, reward_list
 
 
@@ -88,7 +93,7 @@ if __name__ == "__main__":
     print('observation_space:', env.observation_space.n)
     print('action_space:', env.action_space.n)
     # Initialize gym and print some related information
-    alpha, e, gamma, iters, steps, scaling, test_steps = 0.01, 0.4, 0.99, 10000, 200, 5, 1000
+    alpha, e, gamma, iters, steps, scaling, test_steps = 0.1, 0.4, 0.99, 10000, 200, 5, 1000
     # set parameters
     Q_sarsa, r_sarsa = train(env, alpha, gamma, e,
                              iters, steps, scaling, 'sarsa', True)
