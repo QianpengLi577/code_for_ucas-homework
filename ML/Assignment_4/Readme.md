@@ -10,7 +10,7 @@ python ML_4.py
 python ML_4.py -h
 ```
 
-### analysis.py 用于分析不同 $\alpha$ 、$\gamma$、$\epsilon$对冰湖学习性能的影响 
+### analysis.py 用于分析不同 $\alpha$ 、$\gamma$、reward对冰湖学习性能的影响 
 #### 运行命令
 ```
 python analysis.py
